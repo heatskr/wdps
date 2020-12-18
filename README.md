@@ -1,4 +1,4 @@
-# WDOS - Web Document Protocol System
+# WDPS - Web Document Protocol System
 
 ## Dependencies
 
