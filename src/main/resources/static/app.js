@@ -23,7 +23,7 @@ angular.module('todoApp', [])
   this.getDocs = function (href) {
     return $http.get (href || '/api/document?page=0&size=10&sort=id,asc', {
       headers: {
-        'Authorization': sessionStorage.token
+        'Authorization': 'Bearer ' + sessionStorage.token
       }
     });
   };
@@ -36,7 +36,7 @@ angular.module('todoApp', [])
     password: 'test123'
   };
 
-  $c.token = sessionStorage.token || null;
+  $c.token = sessionStorage.token || '';
 
   $c.refresh = function (href) {
     docsAPI.getDocs (href).then (function (res) {
@@ -56,9 +56,9 @@ angular.module('todoApp', [])
 
   $c.login = function () {
     fetch ('/login', {
-      method: 'post',
+      method: 'POST',
       headers: {
-        'Accept': 'application/json',
+        'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify ($c.user),
@@ -156,10 +156,11 @@ angular.module('todoApp', [])
   $c.save = function() {
     if ($c.newDoc._links == null) {
       fetch ('/api/document', {
-        method: 'post',
+        method: 'POST',
         headers: {
-          'Accept': 'application/json',
+          'Accept': 'application/json, text/plain, */*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + sessionStorage.token,
         },
         body: JSON.stringify($c.newDoc)
       }).then (function (res) {
@@ -169,10 +170,11 @@ angular.module('todoApp', [])
       });
     } else {
       fetch ($c.newDoc._links.self.href, {
-        method: 'put',
+        method: 'PUT',
         headers: {
-          'Accept': 'application/json',
+          'Accept': 'application/json, text/plain, */*',
           'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + sessionStorage.token,
         },
         body: JSON.stringify ($c.newDoc),
       }).then (function (res) {
@@ -191,11 +193,16 @@ angular.module('todoApp', [])
     if (!confirm ('Are you sure?')) {
       return;
     }
-    var oldDocs = $c.documents;
-    $c.documents = [];
-    angular.forEach (oldDocs, function (doc) {
-      if (curDoc != doc) {
-        $c.documents.push (doc);
+    fetch ($c.newDoc._links.self.href, {
+      method: 'DELETE',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + sessionStorage.token,
+      },
+    }).then (function (res) {
+      if (res.ok) {
+        $c.refresh ($c.links.self.href);
       }
     });
   };
