@@ -1,7 +1,11 @@
 # WDPS - Web Document Protocol System
 
-## Dependencies
+Simple Spring Boot application with dry REST API, JWT authentication
+and documents CRUD client with Angular JS and Bootstrap.
 
+Tested on Google Chrome 87.0.4280.88 on Fedora 33 (Workstation Edition) 64-bit.
+
+## Dependencies
 
 | Feature           | Version |
 |-------------------|---------|
